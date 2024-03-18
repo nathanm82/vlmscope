@@ -30,3 +30,15 @@ path = "vlmscope/__about__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["vlmscope"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["vlmscope", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4", "W"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]
