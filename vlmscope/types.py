@@ -42,3 +42,34 @@ class Prediction:
     text: Optional[str] = None
     score: Optional[float] = None
     metadata: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class MetricResult:
+    """The value of a single metric plus optional per-sample detail."""
+
+    name: str
+    value: float
+    detail: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class EvalResult:
+    """Aggregated result of evaluating one task with one or more metrics."""
+
+    task: str
+    metrics: dict[str, float] = field(default_factory=dict)
+    num_samples: int = 0
+    extra: dict[str, Any] = field(default_factory=dict)
+
+    def add(self, result: MetricResult) -> None:
+        """Record a metric value (overwrites any earlier value of same name)."""
+        self.metrics[result.name] = result.value
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "task": self.task,
+            "num_samples": self.num_samples,
+            "metrics": dict(self.metrics),
+            "extra": dict(self.extra),
+        }
