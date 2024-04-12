@@ -1,0 +1,53 @@
+"""Run configuration.
+
+A :class:`RunConfig` fully describes one evaluation: which task to run, where
+the data comes from, which metrics to report and how to render the result.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Any, Optional
+
+#: Output renderers understood by the CLI / reporter.
+OUTPUT_FORMATS = ("table", "json", "markdown")
+
+
+@dataclass
+class RunConfig:
+    """Parameters for a single evaluation run."""
+
+    task: str
+    dataset: Optional[str] = None
+    metrics: Optional[list[str]] = None
+    limit: Optional[int] = None
+    seed: int = 0
+    output_format: str = "table"
+    extra: dict[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if self.output_format not in OUTPUT_FORMATS:
+            raise ValueError(
+                f"output_format must be one of {OUTPUT_FORMATS}, "
+                f"got {self.output_format!r}"
+            )
+        if self.limit is not None and self.limit <= 0:
+            raise ValueError("limit must be a positive integer or None")
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> RunConfig:
+        """Build a config from a plain dict, ignoring unknown keys."""
+        known = {f.name for f in cls.__dataclass_fields__.values()}  # type: ignore[attr-defined]
+        kwargs = {k: v for k, v in data.items() if k in known}
+        return cls(**kwargs)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "task": self.task,
+            "dataset": self.dataset,
+            "metrics": list(self.metrics) if self.metrics is not None else None,
+            "limit": self.limit,
+            "seed": self.seed,
+            "output_format": self.output_format,
+            "extra": dict(self.extra),
+        }
