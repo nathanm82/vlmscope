@@ -8,7 +8,7 @@ e.g. ``question`` is unused for captioning.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -24,8 +24,8 @@ class Sample:
     """
 
     uid: str
-    image_id: Optional[str] = None
-    question: Optional[str] = None
+    image_id: str | None = None
+    question: str | None = None
     references: tuple[str, ...] = ()
     metadata: dict[str, Any] = field(default_factory=dict)
 
@@ -39,8 +39,8 @@ class Prediction:
     """
 
     uid: str
-    text: Optional[str] = None
-    score: Optional[float] = None
+    text: str | None = None
+    score: float | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
 

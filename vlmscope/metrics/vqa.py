@@ -46,7 +46,7 @@ _CONTRACTIONS = {
     "whats": "what's",
 }
 
-_PUNCT = list(";/[]\"{}()=+\\_-><@`,?!")
+_PUNCT = list(';/[]"{}()=+\\_-><@`,?!')
 _PERIOD_STRIP = re.compile(r"(?!<=\d)(\.)(?!\d)")
 _COMMA_STRIP = re.compile(r"(\d)(,)(\d)")
 
@@ -86,9 +86,7 @@ def _check_lengths(hypotheses: Sequence[str], references: Sequence[Sequence[str]
         raise ValueError("hypotheses and references must have equal length")
 
 
-def vqa_accuracy(
-    hypotheses: Sequence[str], references: Sequence[Sequence[str]]
-) -> float:
+def vqa_accuracy(hypotheses: Sequence[str], references: Sequence[Sequence[str]]) -> float:
     """Standard VQA soft accuracy: ``mean(min(1, matches / 3))``.
 
     ``references[i]`` holds the human answers for example ``i``.
@@ -104,9 +102,7 @@ def vqa_accuracy(
     return total / len(hypotheses)
 
 
-def exact_match(
-    hypotheses: Sequence[str], references: Sequence[Sequence[str]]
-) -> float:
+def exact_match(hypotheses: Sequence[str], references: Sequence[Sequence[str]]) -> float:
     """Fraction of hypotheses that exactly match any normalized reference."""
     _check_lengths(hypotheses, references)
     if not hypotheses:

@@ -58,9 +58,7 @@ def corpus_bleu(
                 clipped[n - 1] += min(count, max_ref[gram])
                 total[n - 1] += count
 
-    precisions = [
-        clipped[i] / total[i] if total[i] > 0 else 0.0 for i in range(max_n)
-    ]
+    precisions = [clipped[i] / total[i] if total[i] > 0 else 0.0 for i in range(max_n)]
     if min(precisions) <= 0.0:
         return 0.0
     geo_mean = math.exp(sum(math.log(p) for p in precisions) / max_n)

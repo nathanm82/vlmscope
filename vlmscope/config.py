@@ -7,7 +7,7 @@ the data comes from, which metrics to report and how to render the result.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any
 
 #: Output renderers understood by the CLI / reporter.
 OUTPUT_FORMATS = ("table", "json", "markdown")
@@ -18,9 +18,9 @@ class RunConfig:
     """Parameters for a single evaluation run."""
 
     task: str
-    dataset: Optional[str] = None
-    metrics: Optional[list[str]] = None
-    limit: Optional[int] = None
+    dataset: str | None = None
+    metrics: list[str] | None = None
+    limit: int | None = None
     seed: int = 0
     output_format: str = "table"
     extra: dict[str, Any] = field(default_factory=dict)
@@ -28,8 +28,7 @@ class RunConfig:
     def __post_init__(self) -> None:
         if self.output_format not in OUTPUT_FORMATS:
             raise ValueError(
-                f"output_format must be one of {OUTPUT_FORMATS}, "
-                f"got {self.output_format!r}"
+                f"output_format must be one of {OUTPUT_FORMATS}, got {self.output_format!r}"
             )
         if self.limit is not None and self.limit <= 0:
             raise ValueError("limit must be a positive integer or None")

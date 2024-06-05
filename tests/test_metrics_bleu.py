@@ -3,7 +3,6 @@ from __future__ import annotations
 import math
 
 import pytest
-
 from vlmscope.metrics.bleu import corpus_bleu, sentence_bleu
 
 

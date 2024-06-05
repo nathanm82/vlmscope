@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import pytest
-
 from vlmscope.metrics.vqa import exact_match, normalize_answer, vqa_accuracy
 
 

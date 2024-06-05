@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import numpy as np
-
 from vlmscope.metrics.retrieval import (
     cosine_similarity,
     mean_rank,

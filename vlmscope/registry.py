@@ -7,7 +7,8 @@ dispatch tables.
 
 from __future__ import annotations
 
-from typing import Callable, Generic, Iterator, Optional, TypeVar, Union
+from collections.abc import Callable, Iterator
+from typing import Generic, TypeVar
 
 T = TypeVar("T")
 
@@ -19,9 +20,7 @@ class Registry(Generic[T]):
         self._kind = kind
         self._items: dict[str, T] = {}
 
-    def register(
-        self, name: str, obj: Optional[T] = None
-    ) -> Union[T, Callable[[T], T]]:
+    def register(self, name: str, obj: T | None = None) -> T | Callable[[T], T]:
         """Register ``obj`` under ``name``.
 
         Usable directly (``reg.register("x", obj)``) or as a decorator
@@ -47,10 +46,7 @@ class Registry(Generic[T]):
         try:
             return self._items[name]
         except KeyError:
-            raise KeyError(
-                f"unknown {self._kind} {name!r}; "
-                f"available: {self.names()}"
-            ) from None
+            raise KeyError(f"unknown {self._kind} {name!r}; available: {self.names()}") from None
 
     def names(self) -> list[str]:
         return sorted(self._items)

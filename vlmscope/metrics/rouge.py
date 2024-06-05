@@ -30,9 +30,7 @@ def _lcs_length(a: Sequence[str], b: Sequence[str]) -> int:
     return prev[n]
 
 
-def rouge_l_sentence(
-    hypothesis: str, references: Sequence[str], beta: float = 1.2
-) -> float:
+def rouge_l_sentence(hypothesis: str, references: Sequence[str], beta: float = 1.2) -> float:
     """ROUGE-L F-measure for a single hypothesis."""
     h = tokenize(hypothesis)
     if not h:
@@ -63,7 +61,5 @@ def rouge_l(
         raise ValueError("hypotheses and references must have equal length")
     if not hypotheses:
         return 0.0
-    scores = [
-        rouge_l_sentence(h, r, beta) for h, r in zip(hypotheses, references)
-    ]
+    scores = [rouge_l_sentence(h, r, beta) for h, r in zip(hypotheses, references)]
     return sum(scores) / len(scores)

@@ -9,12 +9,11 @@ of acceptable indices.
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-from typing import Union
 
 import numpy as np
 
 #: A query's ground truth: a single candidate index or a set of indices.
-Positive = Union[int, Iterable[int]]
+Positive = int | Iterable[int]
 
 
 def _as_index_set(positive: Positive) -> set[int]:
@@ -37,9 +36,7 @@ def cosine_similarity(queries: np.ndarray, candidates: np.ndarray) -> np.ndarray
     return q @ c.T
 
 
-def recall_at_k(
-    scores: np.ndarray, positives: Sequence[Positive], k: int
-) -> float:
+def recall_at_k(scores: np.ndarray, positives: Sequence[Positive], k: int) -> float:
     """Fraction of queries whose top-``k`` candidates include a positive."""
     scores = np.asarray(scores, dtype=np.float64)
     num_queries = scores.shape[0]
