@@ -9,14 +9,13 @@ hypotheses and references. Retrieval is different enough to live on its own
 
 from __future__ import annotations
 
-import abc
 from collections.abc import Sequence
 
 from vlmscope.metrics import metric_registry
 from vlmscope.types import EvalResult, Prediction, Sample
 
 
-class Task(abc.ABC):
+class Task:
     """Common base: a name and the metrics the task reports."""
 
     name: str = ""
@@ -29,9 +28,7 @@ class Task(abc.ABC):
 class GenerationTask(Task):
     """Compares generated text against references using generation metrics."""
 
-    def __init__(
-        self, name: str | None = None, metrics: Sequence[str] | None = None
-    ) -> None:
+    def __init__(self, name: str | None = None, metrics: Sequence[str] | None = None) -> None:
         if name is not None:
             self.name = name
         self._metrics = tuple(metrics) if metrics is not None else self.default_metrics
@@ -40,21 +37,16 @@ class GenerationTask(Task):
         return self._metrics
 
     @staticmethod
-    def _align(
-        samples: Sequence[Sample], predictions: Sequence[Prediction]
-    ) -> list[Prediction]:
+    def _align(samples: Sequence[Sample], predictions: Sequence[Prediction]) -> list[Prediction]:
         by_uid = {p.uid: p for p in predictions}
         missing = [s.uid for s in samples if s.uid not in by_uid]
         if missing:
             raise ValueError(
-                f"missing predictions for {len(missing)} sample(s); "
-                f"first few: {missing[:3]}"
+                f"missing predictions for {len(missing)} sample(s); first few: {missing[:3]}"
             )
         return [by_uid[s.uid] for s in samples]
 
-    def evaluate(
-        self, samples: Sequence[Sample], predictions: Sequence[Prediction]
-    ) -> EvalResult:
+    def evaluate(self, samples: Sequence[Sample], predictions: Sequence[Prediction]) -> EvalResult:
         ordered = self._align(samples, predictions)
         hypotheses = [p.text or "" for p in ordered]
         references = [list(s.references) for s in samples]
