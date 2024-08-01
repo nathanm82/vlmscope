@@ -12,11 +12,11 @@ import json
 from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 
 from vlmscope.types import Sample
 
-PathLike = Union[str, Path]
+PathLike = str | Path
 
 # Record keys consumed into typed Sample fields; everything else -> metadata.
 _RESERVED = {
@@ -87,9 +87,7 @@ def load_jsonl(path: PathLike, name: str | None = None) -> Dataset:
     return Dataset(name or p.stem, samples)
 
 
-def load_csv(
-    path: PathLike, name: str | None = None, *, references_sep: str = ";"
-) -> Dataset:
+def load_csv(path: PathLike, name: str | None = None, *, references_sep: str = ";") -> Dataset:
     """Load a dataset from a CSV file with a header row.
 
     A ``references`` column may carry several values joined by

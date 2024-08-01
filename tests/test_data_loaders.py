@@ -36,9 +36,7 @@ def test_load_jsonl(tmp_path: Path) -> None:
 def test_load_csv(tmp_path: Path) -> None:
     p = tmp_path / "data.csv"
     p.write_text(
-        "uid,image_id,question,references\n"
-        "1,i1,what?,yes;no\n"
-        "2,i2,where?,home\n",
+        "uid,image_id,question,references\n1,i1,what?,yes;no\n2,i2,where?,home\n",
         encoding="utf-8",
     )
     ds = load_csv(p)

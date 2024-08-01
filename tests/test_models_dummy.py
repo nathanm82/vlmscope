@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import numpy as np
-
 from vlmscope.models.base import CaptionModel, EmbeddingModel, VQAModel
 from vlmscope.models.dummy import (
     HashingEmbeddingModel,
