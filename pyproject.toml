@@ -20,6 +20,9 @@ classifiers = [
 dynamic = ["version"]
 dependencies = ["numpy>=1.21"]
 
+[project.scripts]
+vlmscope = "vlmscope.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/nathanm82/vlmscope"
 Repository = "https://github.com/nathanm82/vlmscope"
