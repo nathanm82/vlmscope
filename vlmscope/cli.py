@@ -3,11 +3,23 @@
 from __future__ import annotations
 
 import argparse
+import json
 from collections.abc import Sequence
+from pathlib import Path
 
 from vlmscope.__about__ import __version__
+from vlmscope.data.loaders import Dataset, load_csv, load_jsonl
+from vlmscope.data.toy import TOY_DATASETS
 from vlmscope.metrics import metric_registry
+from vlmscope.models.dummy import (
+    HashingEmbeddingModel,
+    LookupCaptionModel,
+    LookupVQAModel,
+)
+from vlmscope.report import render
+from vlmscope.runner import evaluate
 from vlmscope.tasks import task_registry
+from vlmscope.types import Prediction
 
 
 def _cmd_list_tasks(args: argparse.Namespace) -> int:
@@ -31,6 +43,88 @@ def _add_list_commands(subparsers: argparse._SubParsersAction) -> None:
     p_metrics.set_defaults(func=_cmd_list_metrics)
 
 
+def _load_dataset(spec: str) -> Dataset:
+    if spec.startswith("toy:"):
+        name = spec.split(":", 1)[1]
+        if name not in TOY_DATASETS:
+            raise ValueError(
+                f"unknown toy dataset {name!r}; choose from {sorted(TOY_DATASETS)}"
+            )
+        return TOY_DATASETS[name]()
+    path = Path(spec)
+    if path.suffix == ".jsonl":
+        return load_jsonl(path)
+    if path.suffix == ".csv":
+        return load_csv(path)
+    raise ValueError(
+        f"unsupported dataset {spec!r}; use a .jsonl/.csv path or toy:<name>"
+    )
+
+
+def _load_predictions(path: str) -> list[Prediction]:
+    predictions: list[Prediction] = []
+    with Path(path).open(encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            record = json.loads(line)
+            predictions.append(
+                Prediction(
+                    uid=str(record["uid"]),
+                    text=record.get("text"),
+                    score=record.get("score"),
+                )
+            )
+    return predictions
+
+
+def _demo_model(task: str) -> object:
+    # The CLI ships dummy models so `run` works with zero setup; real
+    # evaluations pass a model (or a predictions file) through the Python API.
+    if task == "vqa":
+        return LookupVQAModel()
+    if task == "captioning":
+        return LookupCaptionModel()
+    return HashingEmbeddingModel()
+
+
+def _cmd_run(args: argparse.Namespace) -> int:
+    dataset = _load_dataset(args.dataset)
+    predictions = _load_predictions(args.predictions) if args.predictions else None
+    model = None if predictions is not None else _demo_model(args.task)
+    result = evaluate(
+        args.task,
+        dataset,
+        model=model,
+        predictions=predictions,
+        limit=args.limit,
+    )
+    text = render(result, args.format)
+    if args.output:
+        Path(args.output).write_text(text + "\n", encoding="utf-8")
+    else:
+        print(text)
+    return 0
+
+
+def _add_run_command(subparsers: argparse._SubParsersAction) -> None:
+    run = subparsers.add_parser("run", help="Run an evaluation and print the result.")
+    run.add_argument("--task", required=True, help="Task name (see list-tasks).")
+    run.add_argument(
+        "--dataset", required=True, help="Path to .jsonl/.csv or toy:<name>."
+    )
+    run.add_argument("--predictions", help="JSONL of {uid, text} predictions to score.")
+    run.add_argument(
+        "--format", default="table", choices=("table", "json", "markdown")
+    )
+    run.add_argument(
+        "--limit", type=int, default=None, help="Evaluate at most N samples."
+    )
+    run.add_argument("--output", help="Write the report to a file instead of stdout.")
+    run.set_defaults(func=_cmd_run)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="vlmscope",
@@ -42,6 +136,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.set_defaults(func=None)
     subparsers = parser.add_subparsers(dest="command")
     _add_list_commands(subparsers)
+    _add_run_command(subparsers)
     return parser
 
 
