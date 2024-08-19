@@ -7,6 +7,7 @@ the data comes from, which metrics to report and how to render the result.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 #: Output renderers understood by the CLI / reporter.
@@ -39,6 +40,19 @@ class RunConfig:
         known = {f.name for f in cls.__dataclass_fields__.values()}  # type: ignore[attr-defined]
         kwargs = {k: v for k, v in data.items() if k in known}
         return cls(**kwargs)
+
+    @classmethod
+    def from_yaml(cls, path: str | Path) -> RunConfig:
+        """Load a config from a YAML file (requires the ``yaml`` extra)."""
+        try:
+            import yaml
+        except ModuleNotFoundError as exc:  # pragma: no cover - optional dep
+            raise RuntimeError(
+                "PyYAML is required for YAML configs; install vlmscope[yaml]"
+            ) from exc
+        with Path(path).open(encoding="utf-8") as fh:
+            data = yaml.safe_load(fh) or {}
+        return cls.from_dict(data)
 
     def to_dict(self) -> dict[str, Any]:
         return {
