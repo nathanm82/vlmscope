@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from vlmscope.cli import main
 
 
@@ -40,9 +39,7 @@ def test_run_toy_vqa_json(capsys: pytest.CaptureFixture[str]) -> None:
     assert data["num_samples"] == 6
 
 
-def test_run_with_predictions(
-    tmp_path: Path, capsys: pytest.CaptureFixture[str]
-) -> None:
+def test_run_with_predictions(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     preds = tmp_path / "preds.jsonl"
     preds.write_text(
         "\n".join(json.dumps({"uid": f"q{i}", "text": "cat"}) for i in range(1, 7)),
@@ -68,8 +65,6 @@ def test_run_with_predictions(
 
 def test_run_writes_output_file(tmp_path: Path) -> None:
     out = tmp_path / "report.txt"
-    code = main(
-        ["run", "--task", "retrieval", "--dataset", "toy:retrieval", "--output", str(out)]
-    )
+    code = main(["run", "--task", "retrieval", "--dataset", "toy:retrieval", "--output", str(out)])
     assert code == 0
     assert out.read_text(encoding="utf-8").strip()

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import pytest
-
 from vlmscope.data.toy import toy_captions, toy_retrieval, toy_vqa
 from vlmscope.models.dummy import (
     HashingEmbeddingModel,

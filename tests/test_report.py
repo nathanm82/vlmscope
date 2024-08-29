@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 
 import pytest
-
 from vlmscope.report import format_json, format_markdown, format_table, render
 from vlmscope.types import EvalResult
 
