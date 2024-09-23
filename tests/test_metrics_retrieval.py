@@ -51,3 +51,10 @@ def test_retrieval_report_keys() -> None:
     assert "recall@2" in rep
     assert "median_rank" in rep
     assert "mean_rank" in rep
+
+
+def test_empty_inputs_do_not_crash() -> None:
+    empty = np.zeros((0, 0))
+    assert recall_at_k(empty, [], 1) == 0.0
+    assert median_rank(empty, []) == 0.0
+    assert mean_rank(empty, []) == 0.0
