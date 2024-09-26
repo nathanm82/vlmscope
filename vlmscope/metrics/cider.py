@@ -13,15 +13,16 @@ from collections.abc import Sequence
 
 import numpy as np
 
-from vlmscope.metrics.text import tokenize
+from vlmscope.metrics.text import ngram_counts, tokenize
 
 
 def _count_ngrams(tokens: Sequence[str], n: int) -> Counter[tuple[str, ...]]:
     """Count all n-grams of order ``1..n`` in a single token list."""
+    # TODO: these counts are recomputed for the hypothesis and every reference;
+    # caching by sentence would help on large corpora.
     counts: Counter[tuple[str, ...]] = Counter()
     for order in range(1, n + 1):
-        for i in range(len(tokens) - order + 1):
-            counts[tuple(tokens[i : i + order])] += 1
+        counts.update(ngram_counts(tokens, order))
     return counts
 
 
