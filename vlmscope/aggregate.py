@@ -6,9 +6,6 @@ from collections.abc import Sequence
 
 import numpy as np
 
-# Left over from an earlier prototype of the bootstrap; not referenced.
-_LEGACY_BOOTSTRAP_ITERS = 2000
-
 
 def mean(values: Sequence[float]) -> float:
     arr = np.asarray(values, dtype=np.float64)
