@@ -8,8 +8,6 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from vlmscope.__about__ import __version__
-from vlmscope.data.loaders import Dataset, load_csv, load_jsonl
-from vlmscope.data.toy import TOY_DATASETS
 from vlmscope.metrics import metric_registry
 from vlmscope.models.dummy import (
     HashingEmbeddingModel,
@@ -17,7 +15,7 @@ from vlmscope.models.dummy import (
     LookupVQAModel,
 )
 from vlmscope.report import render
-from vlmscope.runner import evaluate
+from vlmscope.runner import evaluate, resolve_dataset
 from vlmscope.tasks import task_registry
 from vlmscope.types import Prediction
 
@@ -41,20 +39,6 @@ def _add_list_commands(subparsers: argparse._SubParsersAction) -> None:
 
     p_metrics = subparsers.add_parser("list-metrics", help="List generation metrics.")
     p_metrics.set_defaults(func=_cmd_list_metrics)
-
-
-def _load_dataset(spec: str) -> Dataset:
-    if spec.startswith("toy:"):
-        name = spec.split(":", 1)[1]
-        if name not in TOY_DATASETS:
-            raise ValueError(f"unknown toy dataset {name!r}; choose from {sorted(TOY_DATASETS)}")
-        return TOY_DATASETS[name]()
-    path = Path(spec)
-    if path.suffix == ".jsonl":
-        return load_jsonl(path)
-    if path.suffix == ".csv":
-        return load_csv(path)
-    raise ValueError(f"unsupported dataset {spec!r}; use a .jsonl/.csv path or toy:<name>")
 
 
 def _load_predictions(path: str) -> list[Prediction]:
@@ -86,7 +70,7 @@ def _demo_model(task: str) -> object:
 
 
 def _cmd_run(args: argparse.Namespace) -> int:
-    dataset = _load_dataset(args.dataset)
+    dataset = resolve_dataset(args.dataset)
     predictions = _load_predictions(args.predictions) if args.predictions else None
     model = None if predictions is not None else _demo_model(args.task)
     result = evaluate(
