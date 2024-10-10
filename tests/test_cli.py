@@ -63,6 +63,18 @@ def test_run_with_predictions(tmp_path: Path, capsys: pytest.CaptureFixture[str]
     assert "vqa_accuracy" in data["metrics"]
 
 
+def test_unknown_task_exits_with_code_2(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    code = main(["run", "--task", "nope", "--dataset", "toy:vqa"])
+    assert code == 2
+    assert "error" in capsys.readouterr().err.lower()
+
+
+def test_unknown_dataset_exits_with_code_2() -> None:
+    assert main(["run", "--task", "vqa", "--dataset", "toy:nope"]) == 2
+
+
 def test_run_writes_output_file(tmp_path: Path) -> None:
     out = tmp_path / "report.txt"
     code = main(["run", "--task", "retrieval", "--dataset", "toy:retrieval", "--output", str(out)])
