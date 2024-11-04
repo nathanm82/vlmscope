@@ -1,0 +1,33 @@
+name: Release
+
+# Build and validate distribution artifacts when a version tag is pushed.
+# To publish to PyPI, add a job using PyPI Trusted Publishing
+# (pypa/gh-action-pypi-publish) gated on a configured environment.
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build tooling
+        run: python -m pip install --upgrade pip build twine
+      - name: Build sdist and wheel
+        run: python -m build
+      - name: Check metadata
+        run: python -m twine check dist/*
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/*
