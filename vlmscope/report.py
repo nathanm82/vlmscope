@@ -37,10 +37,19 @@ def format_json(result: EvalResult, indent: int = 2) -> str:
     return json.dumps(result.as_dict(), indent=indent, sort_keys=True)
 
 
+def format_csv(result: EvalResult) -> str:
+    """Two columns -- ``metric,value`` -- with a header row."""
+    lines = ["metric,value"]
+    for name, value in result.metrics.items():
+        lines.append(f"{name},{value:.6f}")
+    return "\n".join(lines)
+
+
 _RENDERERS = {
     "table": format_table,
     "markdown": format_markdown,
     "json": format_json,
+    "csv": format_csv,
 }
 
 

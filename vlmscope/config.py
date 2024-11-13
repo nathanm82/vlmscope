@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 #: Output renderers understood by the CLI / reporter.
-OUTPUT_FORMATS = ("table", "json", "markdown")
+OUTPUT_FORMATS = ("table", "json", "markdown", "csv")
 
 
 @dataclass
