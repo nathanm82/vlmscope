@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project
 adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.0]
+
+### Added
+
+- CSV export for evaluation reports: `render(result, "csv")` and
+  `vlmscope run --format csv`.
+
 ## [0.1.0]
 
 Initial release.
@@ -20,4 +27,5 @@ Initial release.
 - `evaluate()` entry point and table / JSON / Markdown reporting.
 - `vlmscope` command-line interface (`list-tasks`, `list-metrics`, `run`).
 
+[0.2.0]: https://github.com/nathanm82/vlmscope/releases/tag/v0.2.0
 [0.1.0]: https://github.com/nathanm82/vlmscope/releases/tag/v0.1.0
