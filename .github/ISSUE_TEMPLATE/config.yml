@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions & discussion
+    url: https://github.com/nathanm82/vlmscope/discussions
+    about: Ask usage questions or share evaluation results here.
