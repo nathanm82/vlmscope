@@ -54,10 +54,6 @@ warn_unused_ignores = false
 no_implicit_optional = true
 check_untyped_defs = true
 
-[[tool.mypy.overrides]]
-module = "numpy.*"
-follow_imports = "skip"
-
 [project.optional-dependencies]
 yaml = ["pyyaml>=6.0"]
 dev = [
