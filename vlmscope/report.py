@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+
 from vlmscope.types import EvalResult
 
 
@@ -17,7 +19,29 @@ def format_table(result: EvalResult) -> str:
     return "\n".join(lines)
 
 
-_RENDERERS = {"table": format_table}
+def format_markdown(result: EvalResult) -> str:
+    """A GitHub-flavoured Markdown table of the metrics."""
+    lines = [
+        f"### {result.task} (n={result.num_samples})",
+        "",
+        "| metric | value |",
+        "| --- | --- |",
+    ]
+    for name, value in result.metrics.items():
+        lines.append(f"| {name} | {value:.4f} |")
+    return "\n".join(lines)
+
+
+def format_json(result: EvalResult, indent: int = 2) -> str:
+    """Stable JSON, with metric keys sorted for reproducible diffs."""
+    return json.dumps(result.as_dict(), indent=indent, sort_keys=True)
+
+
+_RENDERERS = {
+    "table": format_table,
+    "markdown": format_markdown,
+    "json": format_json,
+}
 
 
 def render(result: EvalResult, fmt: str = "table") -> str:
