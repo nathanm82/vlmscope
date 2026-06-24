@@ -79,3 +79,41 @@ def normalize_answer(answer: str) -> str:
     text = _strip_punctuation(text)
     text = _process_words(text)
     return text.strip()
+
+
+def _check_lengths(hypotheses: Sequence[str], references: Sequence[Sequence[str]]) -> None:
+    if len(hypotheses) != len(references):
+        raise ValueError("hypotheses and references must have equal length")
+
+
+def vqa_accuracy(
+    hypotheses: Sequence[str], references: Sequence[Sequence[str]]
+) -> float:
+    """Standard VQA soft accuracy: ``mean(min(1, matches / 3))``.
+
+    ``references[i]`` holds the human answers for example ``i``.
+    """
+    _check_lengths(hypotheses, references)
+    if not hypotheses:
+        return 0.0
+    total = 0.0
+    for hyp, answers in zip(hypotheses, references):
+        norm_hyp = normalize_answer(hyp)
+        matches = sum(1 for a in answers if normalize_answer(a) == norm_hyp)
+        total += min(1.0, matches / 3.0)
+    return total / len(hypotheses)
+
+
+def exact_match(
+    hypotheses: Sequence[str], references: Sequence[Sequence[str]]
+) -> float:
+    """Fraction of hypotheses that exactly match any normalized reference."""
+    _check_lengths(hypotheses, references)
+    if not hypotheses:
+        return 0.0
+    hits = 0
+    for hyp, answers in zip(hypotheses, references):
+        norm_hyp = normalize_answer(hyp)
+        if any(normalize_answer(a) == norm_hyp for a in answers):
+            hits += 1
+    return hits / len(hypotheses)
