@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -118,7 +119,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     if getattr(args, "func", None) is None:
         parser.print_help()
         return 0
-    return int(args.func(args))
+    try:
+        return int(args.func(args))
+    except (KeyError, ValueError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":
