@@ -38,19 +38,25 @@ src = ["vlmscope", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "C4", "W"]
-ignore = ["E501"]
+# E501: line length is enforced by the formatter.
+# B905: zip lengths are validated explicitly before zipping.
+ignore = ["E501", "B905"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["B011"]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.12"
 files = ["vlmscope"]
 ignore_missing_imports = true
 warn_redundant_casts = true
 warn_unused_ignores = false
 no_implicit_optional = true
 check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "numpy.*"
+follow_imports = "skip"
 
 [project.optional-dependencies]
 yaml = ["pyyaml>=6.0"]
