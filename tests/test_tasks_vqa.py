@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import pytest
-
 from vlmscope.tasks.vqa import VQATask
 from vlmscope.types import Prediction, Sample
 
