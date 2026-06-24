@@ -7,7 +7,7 @@ predictions, and get back an :class:`~vlmscope.types.EvalResult`.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -51,7 +51,7 @@ def _evaluate_retrieval(
 
 def evaluate(
     task: Task | str,
-    dataset: Sequence[Sample],
+    dataset: Iterable[Sample],
     *,
     model: Any = None,
     predictions: Sequence[Prediction] | None = None,
@@ -73,6 +73,8 @@ def evaluate(
             raise ValueError("retrieval evaluation requires an embedding model")
         return _evaluate_retrieval(resolved, samples, model, direction)
 
+    if not isinstance(resolved, GenerationTask):
+        raise ValueError(f"task {resolved.name!r} does not support prediction-based evaluation")
     if predictions is None:
         if model is None:
             raise ValueError("generation evaluation requires a model or predictions")
@@ -85,18 +87,14 @@ def resolve_dataset(spec: str) -> Dataset:
     if spec.startswith("toy:"):
         name = spec.split(":", 1)[1]
         if name not in TOY_DATASETS:
-            raise ValueError(
-                f"unknown toy dataset {name!r}; choose from {sorted(TOY_DATASETS)}"
-            )
+            raise ValueError(f"unknown toy dataset {name!r}; choose from {sorted(TOY_DATASETS)}")
         return TOY_DATASETS[name]()
     path = Path(spec)
     if path.suffix == ".jsonl":
         return load_jsonl(path)
     if path.suffix == ".csv":
         return load_csv(path)
-    raise ValueError(
-        f"unsupported dataset {spec!r}; use a .jsonl/.csv path or toy:<name>"
-    )
+    raise ValueError(f"unsupported dataset {spec!r}; use a .jsonl/.csv path or toy:<name>")
 
 
 def run(
@@ -112,6 +110,4 @@ def run(
     task = task_registry.get(config.task)
     if config.metrics and isinstance(task, GenerationTask):
         task = type(task)(metrics=config.metrics)
-    return evaluate(
-        task, dataset, model=model, predictions=predictions, limit=config.limit
-    )
+    return evaluate(task, dataset, model=model, predictions=predictions, limit=config.limit)
