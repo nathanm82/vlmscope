@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import pytest
-
 from vlmscope.metrics.text import ngram_counts, ngrams, normalize_text, tokenize
 
 

@@ -44,7 +44,7 @@ def _tfidf_vector(
     log_num_images: float,
     n: int,
 ) -> tuple[list[dict[tuple[str, ...], float]], list[float]]:
-    vecs: list[dict[tuple[str, ...], float]] = [dict() for _ in range(n)]
+    vecs: list[dict[tuple[str, ...], float]] = [{} for _ in range(n)]
     norms = [0.0] * n
     for gram, tf in _count_ngrams(tokens, n).items():
         order = len(gram) - 1

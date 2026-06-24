@@ -12,8 +12,7 @@ live in :mod:`vlmscope.metrics.retrieval`.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
-from typing import Callable
+from collections.abc import Callable, Sequence
 
 from vlmscope.registry import Registry
 
