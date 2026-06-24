@@ -2,6 +2,6 @@
 
 from __future__ import annotations
 
-from vlmscope.models.base import VQAModel
+from vlmscope.models.base import CaptionModel, EmbeddingModel, VQAModel
 
-__all__ = ["VQAModel"]
+__all__ = ["CaptionModel", "EmbeddingModel", "VQAModel"]
