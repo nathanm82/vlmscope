@@ -40,6 +40,8 @@ def recall_at_k(scores: np.ndarray, positives: Sequence[Positive], k: int) -> fl
     """Fraction of queries whose top-``k`` candidates include a positive."""
     scores = np.asarray(scores, dtype=np.float64)
     num_queries = scores.shape[0]
+    if num_queries == 0:
+        return 0.0
     k = min(k, scores.shape[1])
     topk = np.argsort(-scores, axis=1)[:, :k]
     hits = 0
@@ -63,11 +65,13 @@ def ranks(scores: np.ndarray, positives: Sequence[Positive]) -> np.ndarray:
 
 
 def median_rank(scores: np.ndarray, positives: Sequence[Positive]) -> float:
-    return float(np.median(ranks(scores, positives)))
+    r = ranks(scores, positives)
+    return float(np.median(r)) if r.size else 0.0
 
 
 def mean_rank(scores: np.ndarray, positives: Sequence[Positive]) -> float:
-    return float(np.mean(ranks(scores, positives)))
+    r = ranks(scores, positives)
+    return float(np.mean(r)) if r.size else 0.0
 
 
 def retrieval_report(
