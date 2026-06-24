@@ -94,9 +94,7 @@ def _add_run_command(subparsers: argparse._SubParsersAction) -> None:
     run.add_argument("--task", required=True, help="Task name (see list-tasks).")
     run.add_argument("--dataset", required=True, help="Path to .jsonl/.csv or toy:<name>.")
     run.add_argument("--predictions", help="JSONL of {uid, text} predictions to score.")
-    run.add_argument(
-        "--format", default="table", choices=("table", "json", "markdown", "csv")
-    )
+    run.add_argument("--format", default="table", choices=("table", "json", "markdown", "csv"))
     run.add_argument("--limit", type=int, default=None, help="Evaluate at most N samples.")
     run.add_argument("--output", help="Write the report to a file instead of stdout.")
     run.set_defaults(func=_cmd_run)
