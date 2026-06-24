@@ -47,18 +47,14 @@ def _load_dataset(spec: str) -> Dataset:
     if spec.startswith("toy:"):
         name = spec.split(":", 1)[1]
         if name not in TOY_DATASETS:
-            raise ValueError(
-                f"unknown toy dataset {name!r}; choose from {sorted(TOY_DATASETS)}"
-            )
+            raise ValueError(f"unknown toy dataset {name!r}; choose from {sorted(TOY_DATASETS)}")
         return TOY_DATASETS[name]()
     path = Path(spec)
     if path.suffix == ".jsonl":
         return load_jsonl(path)
     if path.suffix == ".csv":
         return load_csv(path)
-    raise ValueError(
-        f"unsupported dataset {spec!r}; use a .jsonl/.csv path or toy:<name>"
-    )
+    raise ValueError(f"unsupported dataset {spec!r}; use a .jsonl/.csv path or toy:<name>")
 
 
 def _load_predictions(path: str) -> list[Prediction]:
@@ -111,16 +107,10 @@ def _cmd_run(args: argparse.Namespace) -> int:
 def _add_run_command(subparsers: argparse._SubParsersAction) -> None:
     run = subparsers.add_parser("run", help="Run an evaluation and print the result.")
     run.add_argument("--task", required=True, help="Task name (see list-tasks).")
-    run.add_argument(
-        "--dataset", required=True, help="Path to .jsonl/.csv or toy:<name>."
-    )
+    run.add_argument("--dataset", required=True, help="Path to .jsonl/.csv or toy:<name>.")
     run.add_argument("--predictions", help="JSONL of {uid, text} predictions to score.")
-    run.add_argument(
-        "--format", default="table", choices=("table", "json", "markdown")
-    )
-    run.add_argument(
-        "--limit", type=int, default=None, help="Evaluate at most N samples."
-    )
+    run.add_argument("--format", default="table", choices=("table", "json", "markdown"))
+    run.add_argument("--limit", type=int, default=None, help="Evaluate at most N samples.")
     run.add_argument("--output", help="Write the report to a file instead of stdout.")
     run.set_defaults(func=_cmd_run)
 
@@ -130,9 +120,7 @@ def build_parser() -> argparse.ArgumentParser:
         prog="vlmscope",
         description="Evaluate vision-language models on VQA, captioning and retrieval.",
     )
-    parser.add_argument(
-        "--version", action="version", version=f"vlmscope {__version__}"
-    )
+    parser.add_argument("--version", action="version", version=f"vlmscope {__version__}")
     parser.set_defaults(func=None)
     subparsers = parser.add_subparsers(dest="command")
     _add_list_commands(subparsers)

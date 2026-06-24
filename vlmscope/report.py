@@ -49,7 +49,5 @@ def render(result: EvalResult, fmt: str = "table") -> str:
     try:
         renderer = _RENDERERS[fmt]
     except KeyError:
-        raise ValueError(
-            f"unknown format {fmt!r}; choose from {sorted(_RENDERERS)}"
-        ) from None
+        raise ValueError(f"unknown format {fmt!r}; choose from {sorted(_RENDERERS)}") from None
     return renderer(result)
