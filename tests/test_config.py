@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-
 from vlmscope.config import RunConfig
 from vlmscope.models.dummy import LookupVQAModel
 from vlmscope.runner import run
