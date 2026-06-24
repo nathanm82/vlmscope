@@ -7,6 +7,7 @@ all populate ``Sample.references``) so the same reader works across tasks.
 
 from __future__ import annotations
 
+import csv
 import json
 from collections.abc import Iterator
 from dataclasses import dataclass
@@ -83,4 +84,25 @@ def load_jsonl(path: PathLike, name: str | None = None) -> Dataset:
             if not line:
                 continue
             samples.append(_sample_from_record(json.loads(line), index))
+    return Dataset(name or p.stem, samples)
+
+
+def load_csv(
+    path: PathLike, name: str | None = None, *, references_sep: str = ";"
+) -> Dataset:
+    """Load a dataset from a CSV file with a header row.
+
+    A ``references`` column may carry several values joined by
+    ``references_sep`` (``;`` by default).
+    """
+    p = Path(path)
+    samples: list[Sample] = []
+    with p.open(newline="", encoding="utf-8") as fh:
+        reader = csv.DictReader(fh)
+        for index, row in enumerate(reader):
+            record: dict[str, Any] = dict(row)
+            raw = record.get("references")
+            if isinstance(raw, str):
+                record["references"] = [r for r in raw.split(references_sep) if r]
+            samples.append(_sample_from_record(record, index))
     return Dataset(name or p.stem, samples)
