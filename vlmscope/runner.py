@@ -14,9 +14,12 @@ from typing import Any
 from vlmscope.config import RunConfig
 from vlmscope.data.loaders import Dataset, load_csv, load_jsonl
 from vlmscope.data.toy import TOY_DATASETS
+from vlmscope.logging_utils import get_logger
 from vlmscope.tasks import GenerationTask, Task, task_registry
 from vlmscope.tasks.retrieval import RetrievalTask
 from vlmscope.types import EvalResult, Prediction, Sample
+
+_log = get_logger()
 
 
 def _resolve_task(task: Task | str) -> Task:
@@ -67,6 +70,7 @@ def evaluate(
     samples = list(dataset)
     if limit is not None:
         samples = samples[:limit]
+    _log.debug("evaluating task=%r on %d samples", resolved.name, len(samples))
 
     if isinstance(resolved, RetrievalTask):
         if model is None:
