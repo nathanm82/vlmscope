@@ -1,5 +1,9 @@
 # vlmscope
 
+[![CI](https://github.com/nathanm82/vlmscope/actions/workflows/ci.yml/badge.svg)](https://github.com/nathanm82/vlmscope/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![Python](https://img.shields.io/badge/python-3.10%E2%80%933.13-blue)
+
 A small, dependency-light evaluation harness for **vision-language models**. It
 covers the three benchmark families that keep coming up in practice and that I
 got tired of re-implementing by hand:
